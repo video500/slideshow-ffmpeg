@@ -4,6 +4,7 @@
 IMAGES_FOLDER=$1
 AUDIO_FILE=$2
 OUTPUT_VIDEO=$3
+timedelay=4
 
 # Verificar parámetros
 if [ -z "$IMAGES_FOLDER" ] || [ -z "$AUDIO_FILE" ] || [ -z "$OUTPUT_VIDEO" ]; then
@@ -16,7 +17,7 @@ TRANSITIONS=""
 let total=-1
 for IMAGE in "$IMAGES_FOLDER"/*.{jpg,jpeg,png}; do
   if [[ "$IMAGE" != *'*'* ]]; then
-	  FILTER_COMPLEX+=" -loop 1 -t 3 -i \"${IMAGE}\""
+	  FILTER_COMPLEX+=" -loop 1 -t $timedelay -i \"${IMAGE}\""
 	  total=$((total+1))
 	  echo "$total. ${IMAGE}"
   else
@@ -29,7 +30,7 @@ echo "t2=$total2"
 
 # Crear las transiciones
 for i in $(seq 0 $total2); do
-  OFFSET=$((((i+1) * 2)))
+  OFFSET=$(((i+1) * (timedelay-1)))
   if [[ $i == 0 ]]; then 
 	TRANSITIONS+="[${i}:v][$(($i+1)):v]xfade=transition=fade:duration=1:offset=${OFFSET}[v$(($i+1))]"
   else
