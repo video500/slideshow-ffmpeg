@@ -7,7 +7,7 @@ OUTPUT_VIDEO=$3
 
 # Verificar parámetros
 if [ -z "$IMAGES_FOLDER" ] || [ -z "$AUDIO_FILE" ] || [ -z "$OUTPUT_VIDEO" ]; then
-  echo "Uso: $0 <carpeta_imagenes> <archivo_audio> <archivo_salida>"
+  echo "Uso: $0 <carpeta_imagenes> <archivo_audio|""no""> <archivo_salida>"
   exit 1
 fi
 
@@ -45,8 +45,12 @@ echo "Ejecutando el siguiente comando:"
 echo $COMMAND
 eval $COMMAND
 
-ffmpeg -i temp_video.mp4 -i "$AUDIO_FILE" -c:v libx264 -c:a aac -shortest -strict -2 "$OUTPUT_VIDEO"
+if [[ $2 != "no" ]]; then
+	ffmpeg -i temp_video.mp4 -i "$AUDIO_FILE" -c:v libx264 -c:a aac -shortest -strict -2 "$OUTPUT_VIDEO"
+	rm -f temp_video.mp4
+else
+	mv temp_video.mp4 "$OUTPUT_VIDEO"
+fi
 
-rm -f temp_video.mp4
 echo "¡Video creado exitosamente: $OUTPUT_VIDEO!"
 
